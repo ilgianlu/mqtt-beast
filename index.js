@@ -5,7 +5,7 @@ async function main() {
     {
         const client = new Client();
         await fire(client);
-        await sleepAsync(500);
+        await sleepAsync(100);
     }
 }
 
@@ -20,8 +20,9 @@ async function fire(client) {
     await client.subscribe('topic', (topic, message) => {
         console.log(`received ${message.toString()} on ${topic}`);
     });
-    await client.publish('topic', 'hello!');
-    await client.close();
+    client.publish('topic', 'hello!');
+    await sleepAsync(100);
+    client.close();
 }
 
 main().then(() => {
