@@ -1,28 +1,27 @@
-const clientGen = require('./client');
+const Client = require('./client');
 
 async function main() {
-    let count = 0;
-    const i = setInterval(
-        () => {
-            const client1 = clientGen();
-            fire(client1);
-            count++;
-            if (count >= 10) {
-                clearInterval(i);
-            }
-        },
-        500
-    );
-        
+    for (let i = 0; i < 10; i++)
+    {
+        const client = new Client();
+        await fire(client);
+        await sleepAsync(500);
+    }
 }
 
-async function fire(client1) {
-    await client1.connect('mqtt://localhost');
-    await client1.subscribe('topic', (topic, message) => {
+const sleepAsync = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+async function fire(client) {
+    await client.connect('ws://localhost:1080/ws');
+    await client.subscribe('topic', (topic, message) => {
         console.log(`received ${message.toString()} on ${topic}`);
     });
-    await client1.publish('topic', 'hello!');
-    await client1.close();
+    await client.publish('topic', 'hello!');
+    await client.close();
 }
 
 main().then(() => {
