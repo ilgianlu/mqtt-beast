@@ -1,12 +1,14 @@
 const Client = require('./client');
 
 async function main() {
-    for (let i = 0; i < 10; i++)
+    const p = [];
+    for (let i = 0; i < 100; i++)
     {
         const client = new Client();
-        await fire(client);
-        await sleepAsync(100);
+        p.push(fire(client));
+        await sleepAsync(Math.random() * 1000);
     }
+    const r = await Promise.all(p);
 }
 
 const sleepAsync = (ms) => {
@@ -16,13 +18,28 @@ const sleepAsync = (ms) => {
 }
 
 async function fire(client) {
-    await client.connect('ws://localhost:1080/ws');
+    // await client.connect('ws://localhost:1080/ws');
+    await client.connect('mqtt://localhost');
     await client.subscribe('topic', (topic, message) => {
-        console.log(`received ${message.toString()} on ${topic}`);
+        // console.log(`received ${message.toString()} on ${topic}`);
     });
-    client.publish('topic', 'hello!');
-    await sleepAsync(100);
-    client.close();
+    await send(client, 50);
+    
+}
+
+function send(client, count) {
+    return new Promise((resolve) => {
+        let n = 0;
+        const i = setInterval(() => {
+            client.publish('topic', `hello ${n}!`);
+            n++;
+            if (n > count) {
+                clearInterval(i);
+                client.close();
+                resolve();
+            }
+        }, Math.random() * 500);
+    });
 }
 
 main().then(() => {

@@ -3,9 +3,9 @@ const mqtt = require("mqtt");
 class Client {
     client;
 
-    connect(url) {
+    connect(url, options = {}) {
         return new Promise((resolve) => {
-            this.client = mqtt.connect(url);
+            this.client = mqtt.connect(url, options);
             this.client.on("connect", () => {
                 resolve(this);
             });
