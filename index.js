@@ -2,10 +2,10 @@ const Client = require('./client');
 
 async function main() {
     const p = [];
-    for (let i = 0; i < 100; i++)
+    for (let i = 0; i < 1; i++)
     {
         const client = new Client();
-        p.push(fire(client));
+        p.push(fire(client, 1));
         await sleepAsync(Math.random() * 1000);
     }
     const r = await Promise.all(p);
@@ -17,13 +17,13 @@ const sleepAsync = (ms) => {
     });
 }
 
-async function fire(client) {
+async function fire(client, messageNo) {
     // await client.connect('ws://localhost:1080/ws');
     await client.connect('mqtt://localhost');
     await client.subscribe('topic', (topic, message) => {
-        // console.log(`received ${message.toString()} on ${topic}`);
+        console.log(`received ${message.toString()} on ${topic}`);
     });
-    await send(client, 50);
+    await send(client, messageNo);
     
 }
 
@@ -31,7 +31,7 @@ function send(client, count) {
     return new Promise((resolve) => {
         let n = 0;
         const i = setInterval(() => {
-            client.publish('topic', `hello ${n}!`);
+            client.publish('topic', `hello ${n}!`, {retain: true});
             n++;
             if (n > count) {
                 clearInterval(i);

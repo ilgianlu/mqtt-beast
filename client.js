@@ -26,8 +26,8 @@ class Client {
         });
     }
 
-    publish(topic, message) {
-        this.client.publish(topic, message);
+    publish(topic, message, options) {
+        this.client.publish(topic, message, options);
     }
 
     close() {

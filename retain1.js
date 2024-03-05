@@ -6,7 +6,7 @@ async function main() {
         clientId: 'retain1',
         will: {
             topic: 'announce',
-            payload: 'hi I am retain1',
+            payload: 'hi another retain1',
             retain: true
         }
     });
